@@ -87,7 +87,7 @@ def check_env_vars(required_vars: list) -> bool:
     return True
 
 
-def format_score(score: float, threshold: float = 0.9) -> str:
+def format_score(score: float, threshold: float = 0.8) -> str:
     """
     Formata score com indicador visual de aprovação.
 

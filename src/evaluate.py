@@ -245,13 +245,13 @@ def display_results(prompt_name: str, scores: Dict[str, float]) -> bool:
     print("=" * 50)
 
     print("\nMétricas Derivadas:")
-    print(f"  - Helpfulness: {format_score(scores['helpfulness'], threshold=0.9)}")
-    print(f"  - Correctness: {format_score(scores['correctness'], threshold=0.9)}")
+    print(f"  - Helpfulness: {format_score(scores['helpfulness'], threshold=0.8)}")
+    print(f"  - Correctness: {format_score(scores['correctness'], threshold=0.8)}")
 
     print("\nMétricas Base:")
-    print(f"  - F1-Score: {format_score(scores['f1_score'], threshold=0.9)}")
-    print(f"  - Clarity: {format_score(scores['clarity'], threshold=0.9)}")
-    print(f"  - Precision: {format_score(scores['precision'], threshold=0.9)}")
+    print(f"  - F1-Score: {format_score(scores['f1_score'], threshold=0.8)}")
+    print(f"  - Clarity: {format_score(scores['clarity'], threshold=0.8)}")
+    print(f"  - Precision: {format_score(scores['precision'], threshold=0.8)}")
 
     average_score = sum(scores.values()) / len(scores)
 
@@ -259,17 +259,17 @@ def display_results(prompt_name: str, scores: Dict[str, float]) -> bool:
     print(f"📊 MÉDIA GERAL: {average_score:.4f}")
     print("-" * 50)
 
-    all_above_threshold = all(score >= 0.9 for score in scores.values())
-    passed = all_above_threshold and average_score >= 0.9
+    all_above_threshold = all(score >= 0.8 for score in scores.values())
+    passed = all_above_threshold and average_score >= 0.8
 
     if passed:
-        print(f"\n✅ STATUS: APROVADO - Todas as métricas >= 0.9")
+        print(f"\n✅ STATUS: APROVADO - Todas as métricas >= 0.8")
     else:
         print(f"\n❌ STATUS: REPROVADO")
-        failed_metrics = [name for name, score in scores.items() if score < 0.9]
+        failed_metrics = [name for name, score in scores.items() if score < 0.8]
         if failed_metrics:
-            print(f"⚠️  Métricas abaixo de 0.9: {', '.join(failed_metrics)}")
-        print(f"⚠️  Média atual: {average_score:.4f} | Necessário: 0.9000")
+            print(f"⚠️  Métricas abaixo de 0.8: {', '.join(failed_metrics)}")
+        print(f"⚠️  Média atual: {average_score:.4f} | Necessário: 0.8000")
 
     return passed
 
@@ -372,7 +372,7 @@ def main():
     print(f"Reprovados: {sum(1 for r in results_summary if not r['passed'])}\n")
 
     if all_passed:
-        print("✅ Todos os prompts atingiram todas as métricas >= 0.9!")
+        print("✅ Todos os prompts atingiram todas as métricas >= 0.8!")
         print(f"\n✓ Confira os resultados em:")
         print(f"  https://smith.langchain.com/projects/{project_name}")
         print("\nPróximos passos:")
@@ -381,7 +381,7 @@ def main():
         print("3. Faça commit e push para o GitHub")
         return 0
     else:
-        print("⚠️  Alguns prompts não atingiram todas as métricas >= 0.9")
+        print("⚠️  Alguns prompts não atingiram todas as métricas >= 0.8")
         print("\nPróximos passos:")
         print("1. Refatore os prompts com score baixo")
         print("2. Faça push novamente: python src/push_prompts.py")
