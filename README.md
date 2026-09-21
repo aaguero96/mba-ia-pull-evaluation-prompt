@@ -222,7 +222,8 @@ A saída completa de cada rodada está versionada em [`docs/evidencias/logs/`](d
 | `avaliacao-iteracao-1.txt` | Primeira versão do v2 (rodada ainda com o limiar antigo de 0.9 do fork desatualizado) |
 | `avaliacao-iteracao-2.txt` | APROVADO, média 0.8601 |
 | `avaliacao-iteracao-3.txt` | APROVADO, média 0.8578 |
-| `avaliacao-iteracao-4.txt` | APROVADO, média 0.8707 — melhor rodada |
+| `avaliacao-iteracao-4.txt` | APROVADO, média 0.8707 — melhor iteração |
+| `verificacao-independente.txt` | Execução de verificação à parte: 8 testes + APROVADO, média 0.8748 |
 
 ### Comparativo v1 × v2
 
@@ -265,7 +266,10 @@ A consistência também separa as duas versões: a Precision do v1 varia de **0.
 | 1 | Versão inicial do v2: Role + CoT + Skeleton + Few-shot | 0.86 | 0.83 | 0.80 | 0.87 | 0.86 | 0.8444 ✅ |
 | 2 | Persona com atividade; "eu quero" como capacidade geral; Nível 1 cobrindo ação + retorno visível + estado final; bloco de contexto nomeado por natureza; bloco de Critérios Técnicos | 0.87 | 0.85 | 0.83 | 0.87 | 0.88 | 0.8601 ✅ |
 | 3 | Alvo de 2s para lista/tela mobile; bloco de contexto deixa de repetir a correção já descrita nos Critérios Técnicos | 0.87 | 0.85 | 0.82 | 0.87 | 0.88 | 0.8578 ✅ |
-| 4 | Nível 1 com **exatamente** 5 critérios, como nas referências dos relatos simples | **0.89** | **0.86** | 0.82 | **0.88** | **0.90** | **0.8707** ✅ |
+| 4 | Nível 1 com **exatamente** 5 critérios, como nas referências dos relatos simples | 0.89 | 0.86 | 0.82 | 0.88 | 0.90 | 0.8707 ✅ |
+| ✔ | **Verificação independente** — mesma versão do prompt, execução manual à parte | **0.90** | **0.87** | 0.82 | **0.88** | **0.91** | **0.8748** ✅ |
+
+A última linha não é uma iteração: é uma execução de verificação rodada manualmente no terminal, puxando o prompt v2 direto do Hub, sem nenhum estado local das avaliações anteriores. Ela reproduziu a aprovação com folga em todas as 5 métricas — o resultado não depende de uma rodada específica. Log completo em [`docs/evidencias/logs/verificacao-independente.txt`](docs/evidencias/logs/verificacao-independente.txt).
 
 Notas da jornada:
 
