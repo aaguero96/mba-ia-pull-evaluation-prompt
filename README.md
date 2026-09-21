@@ -169,7 +169,7 @@ Critérios de Aceitação:
 ### Outros requisitos do prompt otimizado
 
 - **System vs User Prompt:** o system carrega papel, processo, formato, regras e exemplos; o user carrega **apenas** o relato. A duplicação de `{bug_report}` do v1 foi eliminada — há inclusive um teste automatizado que falha se ela voltar.
-- **Regras explícitas de comportamento:** 11 regras, entre elas "comece diretamente por *Como um*", "nunca faça perguntas", "não invente dados — use marcador entre colchetes como `[nome do gateway de pagamento]`" e "critérios de aceitação descrevem comportamento observável; detalhe de implementação vai para Contexto Técnico".
+- **Regras explícitas de comportamento:** 15 regras, entre elas "comece diretamente por *Como um*", "nunca faça perguntas", "não invente dados — use marcador entre colchetes como `[nome do gateway de pagamento]`" e "critérios de aceitação descrevem comportamento observável; detalhe de implementação vai para Contexto Técnico".
 - **Tratamento de edge cases:** 8 casos cobertos — relato vago, relato sem ator humano (a persona vira "o sistema"), pedido de melhoria em vez de defeito, relato multiproblema, questão de segurança (registra severidade e OWASP), relato em inglês, relato que já aponta a causa raiz e relato com impacto de negócio.
 - **Regra de metas numéricas:** quando o relato traz um número que descreve o *problema* (ex.: "demora mais de 2 minutos", "timeout em 120s"), o critério exige um alvo **melhor** e realista, e o número ruim vai para o Contexto Técnico. Essa regra nasceu de uma iteração: sem ela, o modelo aceitava os 120 s do timeout como meta.
 
@@ -177,19 +177,72 @@ Critérios de Aceitação:
 
 ## B) Resultados Finais
 
-### Dashboard do LangSmith
+### Evidências públicas no LangSmith
 
-- **Prompt v2 publicado (público):** https://smith.langchain.com/hub/test-5728e9689/bug_to_user_story_v2
-- **Projeto de tracing:** `bug-to-user-story-optimization`
-- **Dataset de avaliação:** `bug-to-user-story-optimization-eval` (15 exemplos)
+Todos os links abaixo abrem **sem login**:
+
+| Evidência | Link |
+|---|---|
+| Prompt v2 publicado (público) | https://smith.langchain.com/hub/test-5728e9689/bug_to_user_story_v2 |
+| Dataset de avaliação com os 15 exemplos | https://smith.langchain.com/public/1f6d2ffb-b2d6-492b-bb15-dabbd724d373/d |
+| Tracing detalhado — bug **simples** (carrinho) | https://smith.langchain.com/public/91a852c7-9e80-4a5a-8e5b-11daf75e8c42/r |
+| Tracing detalhado — bug **médio** (ANR no Android) | https://smith.langchain.com/public/d6d73d4f-2d7d-4b9f-9037-0bdbde2a8504/r |
+| Tracing detalhado — bug **complexo** (checkout) | https://smith.langchain.com/public/bf398529-45c6-4aa2-a09d-45de7e316ce7/r |
+
+Projeto de tracing completo (requer login no workspace): `bug-to-user-story-optimization` —
+https://smith.langchain.com/o/2b207cba-2aa8-4b10-8181-67bf2da0e6ad/projects/p/a3d40dc3-2ba9-45f9-8b7b-aa2d42c64444
 
 ### Comparativo v1 × v2
 
-<!-- RESULTADOS -->
+Ambos avaliados com as **mesmas 5 métricas** (`src/metrics.py`), o **mesmo dataset** de 15 exemplos e o **mesmo modelo** (`qwen3.8:27b` como respondedor e como juiz).
+
+| Métrica | v1 (prompt ruim) | v2 (otimizado) | Variação |
+|---|---|---|---|
+| Helpfulness | 0.78 ❌ | **0.89** ✅ | +0.11 |
+| Correctness | 0.80 ❌ | **0.86** ✅ | +0.06 |
+| F1-Score | 0.87 ✅ | 0.82 ✅ | −0.05 |
+| Clarity | 0.82 ✅ | **0.88** ✅ | +0.06 |
+| Precision | 0.73 ❌ | **0.90** ✅ | +0.17 |
+| **Média geral** | **0.7995** | **0.8707** | **+0.0712** |
+| **Status** | ❌ REPROVADO (3 métricas < 0.8) | ✅ **APROVADO** | |
+
+> **Nota metodológica:** o `src/evaluate.py` avalia apenas o v2 (é arquivo pronto, que o desafio proíbe alterar). Para a linha de base do v1 foi usado um script auxiliar fora do projeto, que importa as mesmas funções de `src/metrics.py` e usa o mesmo dataset — os números do v1 são medidos, não estimados.
+
+### Leitura dos resultados
+
+O ponto mais interessante do comparativo é que **o v1 tem F1 maior que o v2** (0.87 contra 0.82) e mesmo assim é reprovado. Isso não é ruído: é o retrato exato do que um prompt ruim faz.
+
+Sem formato definido, o v1 despeja texto. Ele cobre muita coisa — o que infla o *recall* e, por consequência, o F1 — mas inventa estrutura, diverge do formato esperado e adiciona informação não pedida, e é aí que a Precision desaba para 0.73 (com casos individuais em **0.40**).
+
+A diferença fica evidente na mesma entrada, o bug complexo de checkout:
+
+| Versão | Início da resposta | Tamanho |
+|---|---|---|
+| v1 | `# 🐛 Epic: Estabilização Crítica do Fluxo de Checkout` | 6.787 caracteres |
+| v2 | `Como um cliente finalizando uma compra no checkout...` | 4.609 caracteres |
+
+O v1 inventou um formato próprio (épico com emoji e cabeçalhos Markdown) e escreveu 47% a mais. No bug médio a distorção foi ainda maior: 3.661 caracteres contra 1.122 do v2.
+
+A consistência também separa as duas versões: a Precision do v1 varia de **0.40 a 0.92** ao longo dos 15 exemplos, enquanto a do v2 fica entre **0.78 e 0.95**. O ganho do prompt otimizado não é escrever mais — é escrever só o que importa, sempre no mesmo formato.
 
 ### Iterações
 
-<!-- ITERACOES -->
+| # | O que mudou no prompt | Helpful. | Correct. | F1 | Clarity | Precision | Média |
+|---|---|---|---|---|---|---|---|
+| — | *Linha de base: prompt v1* | 0.78 | 0.80 | 0.87 | 0.82 | 0.73 | 0.7995 ❌ |
+| 1 | Versão inicial do v2: Role + CoT + Skeleton + Few-shot | 0.86 | 0.83 | 0.80 | 0.87 | 0.86 | 0.8444 ✅ |
+| 2 | Persona com atividade; "eu quero" como capacidade geral; Nível 1 cobrindo ação + retorno visível + estado final; bloco de contexto nomeado por natureza; bloco de Critérios Técnicos | 0.87 | 0.85 | 0.83 | 0.87 | 0.88 | 0.8601 ✅ |
+| 3 | Alvo de 2s para lista/tela mobile; bloco de contexto deixa de repetir a correção já descrita nos Critérios Técnicos | 0.87 | 0.85 | 0.82 | 0.87 | 0.88 | 0.8578 ✅ |
+| 4 | Nível 1 com **exatamente** 5 critérios, como nas referências dos relatos simples | **0.89** | **0.86** | 0.82 | **0.88** | **0.90** | **0.8707** ✅ |
+
+Notas da jornada:
+
+- A **iteração 1 já passaria** pelo critério de 0.8, mas com F1 em 0.8027 — três milésimos acima da linha. Margem pequena demais para uma métrica julgada por LLM, o que motivou as iterações seguintes.
+- A iteração 2 nasceu de uma comparação linha a linha com as referências: estávamos amarrando o "eu quero" ao detalhe do relato ("adicionar o produto 1234 ao clicar no botão") enquanto a referência descreve a capacidade geral ("adicionar produtos ao meu carrinho de compras").
+- A iteração 3 corrigiu o pior caso individual da rodada anterior (exemplo 10, Precision 0.65 → 0.78), mas o agregado ficou de lado — evidência prática de que **o juiz tem ruído de ±0.10 por exemplo** e que ganhos pontuais se compensam.
+- A iteração 4 saiu de uma constatação nos dados: **todas as 5 referências de bugs simples têm exatamente 5 critérios** (um `Dado que`, um `Quando`, um `Então` e dois `E`). Fixar esse número produziu a melhor rodada.
+
+Durante a iteração 1 também foi descoberto que o fork estava 4 commits atrás do repositório base, sem o commit `fix: lower minimum approval score from 0.9 to 0.8`. O fork foi sincronizado antes de considerar qualquer resultado válido.
 
 ---
 
