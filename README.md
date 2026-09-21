@@ -192,6 +192,38 @@ Todos os links abaixo abrem **sem login**:
 Projeto de tracing completo (requer login no workspace): `bug-to-user-story-optimization` —
 https://smith.langchain.com/o/2b207cba-2aa8-4b10-8181-67bf2da0e6ad/projects/p/a3d40dc3-2ba9-45f9-8b7b-aa2d42c64444
 
+### Screenshots
+
+**Prompt v2 publicado no Hub** — selo `Public`, as 9 tags de metadados e o histórico com os 4 commits (um por iteração):
+
+![Prompt v2 público no LangSmith Hub](docs/evidencias/screenshots/01-prompt-v2-publico-no-hub.jpg)
+
+**Dataset de avaliação** — os 15 relatos de bug com suas referências:
+
+![Dataset com 15 exemplos](docs/evidencias/screenshots/02-dataset-15-exemplos.jpg)
+
+**Tracing detalhado — bug complexo (checkout)**, entrada e saída:
+
+![Trace do exemplo complexo: entrada](docs/evidencias/screenshots/03-trace-complexo-entrada.jpg)
+
+![Trace do exemplo complexo: saída](docs/evidencias/screenshots/04-trace-complexo-saida.jpg)
+
+**Projeto de tracing** — 301 traces das 4 iterações mais a linha de base do v1, com as notas dos juízes visíveis na coluna de saída:
+
+![Projeto de tracing com 301 traces](docs/evidencias/screenshots/05-projeto-tracing-301-traces.jpg)
+
+### Logs brutos das avaliações
+
+A saída completa de cada rodada está versionada em [`docs/evidencias/logs/`](docs/evidencias/logs/):
+
+| Arquivo | Conteúdo |
+|---|---|
+| `baseline-v1.txt` | Linha de base do prompt v1 — REPROVADO, média 0.7995 |
+| `avaliacao-iteracao-1.txt` | Primeira versão do v2 (rodada ainda com o limiar antigo de 0.9 do fork desatualizado) |
+| `avaliacao-iteracao-2.txt` | APROVADO, média 0.8601 |
+| `avaliacao-iteracao-3.txt` | APROVADO, média 0.8578 |
+| `avaliacao-iteracao-4.txt` | APROVADO, média 0.8707 — melhor rodada |
+
 ### Comparativo v1 × v2
 
 Ambos avaliados com as **mesmas 5 métricas** (`src/metrics.py`), o **mesmo dataset** de 15 exemplos e o **mesmo modelo** (`qwen3.8:27b` como respondedor e como juiz).
