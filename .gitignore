@@ -48,3 +48,5 @@ ENV/
 screenshots/
 results/
 .claude/
+# Evidencias do desafio (excecao a regra screenshots/ acima)
+!docs/evidencias/screenshots/
