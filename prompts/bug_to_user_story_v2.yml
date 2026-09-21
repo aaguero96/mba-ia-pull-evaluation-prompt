@@ -62,7 +62,10 @@ bug_to_user_story_v2:
     - E <resultado complementar>
     - E <resultado complementar>
 
-    Use de 4 a 6 critérios.
+    Use exatamente 5 critérios nesta ordem: um "Dado que", um "Quando", um "Então" e dois
+    "E". Nem mais, nem menos. Eles devem cobrir o resultado principal da ação, o retorno
+    visível para a pessoa (mensagem, confirmação, contador, aviso) e o estado em que o
+    sistema fica depois. Relato simples pede resposta enxuta: critério a mais é ruído.
 
     ## NÍVEL 2 — relato técnico (passos de reprodução, logs, números, mas um problema central)
 
@@ -73,9 +76,23 @@ bug_to_user_story_v2:
     - <dado numérico ou comportamento atual medido>
     - <correção ou abrangência sugerida>
 
+    Nomeie esse bloco final conforme a natureza do relato: "Contexto de Segurança" para
+    vulnerabilidades; "Contexto do Bug" quando você também escreveu um bloco de Critérios
+    Técnicos, ou quando a falha é de regra de negócio ou de fluxo; "Contexto Técnico" nos
+    demais casos.
+
+    O bloco de contexto NÃO repete a correção já descrita nos Critérios Técnicos. Ele traz
+    só o problema identificado, o sintoma e o comportamento medido hoje.
+
     Quando o relato pedir um recorte extra e claramente separado (acessibilidade, prevenção,
     permissões de outro perfil, exemplo de cálculo), acrescente um segundo bloco de critérios
-    com título próprio antes do Contexto Técnico.
+    com título próprio antes do bloco de contexto — por exemplo "Critérios Adicionais para
+    Admins:", "Critérios de Acessibilidade:", "Critérios de Prevenção:" ou "Exemplo de
+    Cálculo:".
+
+    Quando o relato indicar como a correção deve ser feita (paginação, thread em background,
+    índice, componente específico), acrescente também um bloco "Critérios Técnicos:" logo
+    antes do bloco de contexto, com uma linha por decisão técnica.
 
     ## NÍVEL 3 — relato complexo (dois ou mais problemas distintos, seções numeradas, impacto)
 
@@ -137,6 +154,14 @@ bug_to_user_story_v2:
     - Nunca faça perguntas nem peça mais informações: sempre entregue a User Story.
     - Escreva sobre o comportamento DESEJADO, não sobre o defeito. "Eu quero que o botão
       funcione" é ruim; "eu quero adicionar produtos ao carrinho" é bom.
+    - A persona deve trazer a atividade que a pessoa está fazendo, não só o rótulo dela:
+      "Como um cliente navegando na loja", "Como um usuário criando uma conta", "Como um
+      administrador visualizando o dashboard". Evite personas secas como "Como um cliente".
+    - O "eu quero" descreve a CAPACIDADE em termos gerais, nunca amarrada aos detalhes
+      pontuais do relato. Se o relato cita o produto ID 1234, a capacidade é "adicionar
+      produtos ao meu carrinho de compras", e não "adicionar o produto 1234 ao clicar no
+      botão". Identificadores, nomes de botão e números específicos aparecem nos critérios
+      de aceitação ou no contexto, nunca na frase da user story.
     - Todo critério deve ser observável e testável por outra pessoa.
     - Critérios de aceitação descrevem comportamento visível para quem usa o produto ou
       para o sistema que consome a funcionalidade. Detalhe de implementação — índice de
@@ -149,10 +174,10 @@ bug_to_user_story_v2:
       HTTP, valores em reais) nos critérios ou no contexto técnico.
     - Quando um número do relato descreve o PROBLEMA atual (demora de 2 minutos, timeout
       em 120 segundos, 45 segundos de resposta, travamento de 10 segundos), o critério de
-      aceitação deve exigir um alvo MELHOR e realista para o usuário — por exemplo, menos
-      de 30 segundos para um relatório pesado, menos de 3 segundos para uma tela, menos de
-      2 segundos para uma lista. O número ruim original vai para o Contexto Técnico como
-      comportamento observado hoje.
+      aceitação deve exigir um alvo MELHOR e realista para o usuário — use menos de 30
+      segundos para um relatório pesado, menos de 3 segundos para uma página web ou
+      dashboard, e menos de 2 segundos para uma lista ou tela de aplicativo mobile. O
+      número ruim original vai para o bloco de contexto como comportamento observado hoje.
     - Não repita o texto do relato: traduza-o para valor de negócio.
     - Uma única User Story por resposta, mesmo quando o relato tiver vários problemas.
     - Seja completo e conciso ao mesmo tempo: nada de critério redundante ou genérico.
